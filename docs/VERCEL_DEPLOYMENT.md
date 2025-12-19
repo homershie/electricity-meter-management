@@ -16,8 +16,8 @@
 
 **修改 `nuxt.config.ts`：**
 - API 基礎 URL 改為 `/api`（相對路徑）
-- 添加 vite-plugin-vuetify 以正確載入 Vuetify 組件
-- 移除 `vuetify/styles` 從 css 陣列（改用 autoImport）
+- 添加 `vite.ssr.noExternal: ['vuetify']` 以正確處理 Vuetify SSR
+- 保留 `vuetify/styles` 在 css 陣列中
 
 ### 3. API 路徑
 
@@ -130,9 +130,10 @@ npm install @vercel/kv
 ### Q: Vuetify 組件無法顯示？
 
 **A:** 確認：
-1. `vite-plugin-vuetify` 已安裝
-2. `nuxt.config.ts` 中已添加 Vuetify module
+1. `nuxt.config.ts` 中已設定 `vite.ssr.noExternal: ['vuetify']`
+2. `build.transpile: ['vuetify']` 已設定
 3. `plugins/vuetify.ts` 存在並正確配置
+4. CSS 中包含 `vuetify/styles`
 
 ### Q: 移動後資料重置？
 

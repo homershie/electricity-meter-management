@@ -1,6 +1,4 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import vuetify from 'vite-plugin-vuetify'
-
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
@@ -9,20 +7,21 @@ export default defineNuxtConfig({
     port: 3000,
   },
 
-  modules: [
-    "@pinia/nuxt",
-    async (options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config) => {
-        config.plugins ||= []
-        config.plugins.push(vuetify({ autoImport: true }))
-      })
-    },
-  ],
+  modules: ["@pinia/nuxt"],
 
-  css: ["@mdi/font/css/materialdesignicons.css"],
+  css: [
+    "vuetify/styles",
+    "@mdi/font/css/materialdesignicons.css"
+  ],
 
   build: {
     transpile: ["vuetify"],
+  },
+
+  vite: {
+    ssr: {
+      noExternal: ['vuetify'],
+    },
   },
 
   runtimeConfig: {
