@@ -2,7 +2,9 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <h1 class="text-h4 mb-4 font-weight-bold">電表階層管理系統</h1>
+        <h1 class="text-h4 mb-4 font-weight-bold text-primary">
+          電表階層管理系統
+        </h1>
 
         <!-- Loading 狀態 -->
         <v-progress-linear

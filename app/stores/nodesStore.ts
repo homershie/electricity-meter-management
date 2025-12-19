@@ -45,8 +45,14 @@ export const useNodesStore = defineStore("nodes", {
      */
     selectedParentId: (state): number | null => {
       if (state.selectedIds.length === 0) return null;
-      const firstNode = findNode(state.nodes, state.selectedIds[0]);
-      return firstNode ? firstNode.parent_id : null;
+      const firstId = state.selectedIds[0];
+      if (firstId === undefined) return null;
+      const firstNode = findNode(state.nodes, firstId);
+      // 確保 parent_id 是 number 或 null，不返回 undefined
+      if (!firstNode) return null;
+      return firstNode.parent_id !== undefined && firstNode.parent_id !== null
+        ? firstNode.parent_id
+        : null;
     },
   },
 

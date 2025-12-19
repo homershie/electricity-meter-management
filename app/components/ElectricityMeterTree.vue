@@ -1,15 +1,20 @@
 <template>
-  <v-card>
-    <v-card-title class="d-flex justify-space-between align-center">
-      <span>電表階層管理</span>
+  <v-card flat>
+    <v-card-title class="d-flex justify-space-between align-center bg-info">
+      <p class="text-body-1">已選取 {{ store.selectedIds.length }} 個電表</p>
       <div>
+        <v-btn color="info" flat>
+          <v-icon start>mdi-pencil</v-icon>
+          編輯電表
+        </v-btn>
         <v-btn
-          color="primary"
+          color="info"
           :disabled="store.selectedIds.length === 0"
           @click="openMoveDialog"
+          flat
         >
           <v-icon start>mdi-file-move</v-icon>
-          移動選取項 ({{ store.selectedIds.length }})
+          移動階層
         </v-btn>
       </div>
     </v-card-title>
@@ -46,7 +51,7 @@
         <template #title="{ item }">
           <div
             class="tree-node-label"
-            :class="{ 'selected': isNodeSelected(item.id) }"
+            :class="{ selected: isNodeSelected(item.id) }"
             @click.stop="handleNodeClick(item)"
           >
             {{ item.name }}
@@ -74,54 +79,54 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useNodesStore } from '~/stores/nodesStore'
-import type { TreeNode } from '~/types/node'
+import { ref, computed } from "vue";
+import { useNodesStore } from "~/stores/nodesStore";
+import type { TreeNode } from "~/types/node";
 
-const store = useNodesStore()
-const showMoveDialog = ref(false)
+const store = useNodesStore();
+const showMoveDialog = ref(false);
 
 // v-treeview 開啟的節點
 const openedNodes = computed({
   get: () => {
     // 將 expandedIds 轉換為節點物件
-    return store.expandedIds
+    return store.expandedIds;
   },
   set: (ids: number[]) => {
-    store.setExpanded(ids)
+    store.setExpanded(ids);
   },
-})
+});
 
 // 取得節點圖示
 function getNodeIcon(item: TreeNode): string {
   if (item.children.length > 0) {
-    return 'mdi-electric-switch'
+    return "mdi-electric-switch";
   }
-  return 'mdi-flash'
+  return "mdi-flash";
 }
 
 // 檢查節點是否被選取
 function isNodeSelected(id: number): boolean {
-  return store.selectedIds.includes(id)
+  return store.selectedIds.includes(id);
 }
 
 // 處理節點點擊
 function handleNodeClick(item: TreeNode) {
-  store.toggleSelected(item.id)
+  store.toggleSelected(item.id);
 }
 
 // 開啟移動對話框
 function openMoveDialog() {
-  showMoveDialog.value = true
+  showMoveDialog.value = true;
 }
 
 // 處理移動操作
 async function handleMove(targetParentId: number | null) {
   try {
-    await store.moveNodes(store.selectedIds, targetParentId)
-    showMoveDialog.value = false
+    await store.moveNodes(store.selectedIds, targetParentId);
+    showMoveDialog.value = false;
   } catch (error) {
-    console.error('Move failed:', error)
+    console.error("Move failed:", error);
   }
 }
 </script>

@@ -1,17 +1,11 @@
 <template>
   <v-app>
-    <v-app-bar color="primary" elevation="2" class="px-8">
-      <template v-slot:prepend>
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      </template>
-      <v-app-bar-title class="font-weight-bold text-h5"
-        >Blutech</v-app-bar-title
-      >
-
-      <template v-slot:append>
-        <v-btn icon="mdi-theme-light-dark" @click="toggleTheme"></v-btn>
-      </template>
-    </v-app-bar>
+    <img
+      src="/logo.svg"
+      alt="Blutech"
+      class="logo cursor-pointer"
+      @click="toggleTheme"
+    />
 
     <v-main>
       <NuxtPage />
@@ -49,5 +43,17 @@ const toggleTheme = () => {
 .v-application {
   font-family: "Helvetica Neue", "Verdana", "Microsoft YaHei", "PingFang SC",
     Arial, sans-serif !important;
+}
+
+.logo {
+  margin: 40px auto;
+  height: 120px;
+  width: auto;
+  transition: filter 0.3s ease;
+}
+
+/* 深色模式下將 LOGO 改為白色 */
+.v-theme--dark .logo {
+  filter: brightness(0) invert(1);
 }
 </style>
