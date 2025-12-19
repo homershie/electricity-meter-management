@@ -1,17 +1,20 @@
 <template>
   <v-card flat>
     <v-card-title class="d-flex justify-space-between align-center bg-info">
-      <p class="text-body-1">已選取 {{ store.selectedIds.length }} 個電表</p>
+      <p class="text-body-1 text-primary">
+        已選取 {{ store.selectedIds.length }} 個電表
+      </p>
       <div>
-        <v-btn color="info" flat>
+        <v-btn color="primary" :disabled="true" variant="text" :ripple="false">
           <v-icon start>mdi-pencil</v-icon>
           編輯電表
         </v-btn>
         <v-btn
-          color="info"
+          color="primary"
           :disabled="store.selectedIds.length === 0"
           @click="openMoveDialog"
-          flat
+          variant="text"
+          :ripple="false"
         >
           <v-icon start>mdi-file-move</v-icon>
           移動階層
