@@ -1,6 +1,6 @@
 # 電表階層管理系統
 
-一個使用 Nuxt 4 + Vuetify 3 + Pinia + TypeScript 開發的電表階層管理系統。
+一個使用 Nuxt 4 + Vue 3 + Pinia + TypeScript 開發的電表階層管理系統。
 
 ## 🎯 功能特色
 
@@ -26,30 +26,19 @@
 ```bash
 # 安裝主專案依賴
 npm install
-
-# 安裝 Mock API 依賴
-cd server
-npm install
-cd ..
 ```
 
 2. **啟動開發伺服器**
 
-需要同時啟動兩個伺服器：
-
 ```bash
-# Terminal 1: 啟動 Mock API（端口 3001）
-cd server
-npm start
-
-# Terminal 2: 啟動 Nuxt 應用（端口 3000 或 3002）
+# 啟動 Nuxt 應用（包含 API 路由）
 npm run dev
 ```
 
 3. **訪問應用**
 
-- 前端應用: http://localhost:3000 或 http://localhost:3002
-- Mock API: http://localhost:3001
+- 前端應用: http://localhost:3000
+- API 端點: http://localhost:3000/api/nodes（自動整合在 Nuxt 中）
 
 ## 📁 專案結構
 
@@ -73,10 +62,17 @@ electricity-meter-management/
 │   └── app.vue              # 應用程式根組件
 ├── plugins/
 │   └── vuetify.ts           # Vuetify 配置
-├── server/                  # Mock API 伺服器
-│   ├── server.js            # Express + json-server
-│   ├── db.json              # 初始電表資料
-│   └── package.json         # API 依賴
+├── server/                  # Nuxt 4 Server API
+│   ├── api/                 # API 路由（現行使用）
+│   │   ├── nodes.get.ts              # GET /api/nodes
+│   │   └── nodes/
+│   │       └── move.patch.ts         # PATCH /api/nodes/move
+│   ├── utils/               # 伺服器工具函式
+│   │   └── dataStore.ts              # 資料存儲（內存）
+│   ├── db.json              # 初始資料（參考用）
+│   ├── server.js            # 貴公司提供的獨立 Mock API（保留作為參考）
+│   ├── package.json         # 獨立伺服器依賴（保留作為參考）
+│   └── README.md            # 貴公司提供的 API 說明文件
 ├── nuxt.config.ts           # Nuxt 配置
 ├── package.json             # 主專案依賴
 └── tsconfig.json            # TypeScript 配置
@@ -119,17 +115,71 @@ electricity-meter-management/
 - **UI Library**: Vuetify 3
 - **State Management**: Pinia
 - **Language**: TypeScript
-- **API**: json-server (Mock API)
+- **API**: Nuxt 4 Server API（內建 API 路由）
+
+### 📋 架構說明
+
+本專案採用 **Nuxt 4 Server API** 整合後端 API，而非使用貴公司提供的獨立 Mock API 伺服器。
+
+#### 🔄 架構變更
+
+**原本架構（貴公司提供）：**
+
+- 獨立的 Express + json-server 伺服器（`server/server.js`）
+- 需要同時啟動兩個伺服器（前端 Nuxt + 後端 Express）
+- 端口：前端 3000，後端 3001
+
+**現行架構（Nuxt 4 Server API）：**
+
+- API 路由整合在 Nuxt 4 的 `server/api/` 目錄
+- 只需執行 `npm run dev` 即可同時啟動前端和 API
+- 單一端口：3000
+
+#### ✅ 為什麼採用 Nuxt 4 Server API？
+
+1. **簡化開發流程**
+
+   - 原本需要同時啟動兩個伺服器（前端 Nuxt + 後端 Express）
+   - 現在只需 `npm run dev`，前端和 API 在同一伺服器運行
+   - 減少端口管理和啟動步驟，方便本地開發
+
+2. **符合 Nuxt 4 最佳實踐**
+
+   - Nuxt 4 提供內建的 Server API 路由功能
+   - 使用 `server/api/` 目錄即可建立 API 端點
+   - 與前端共用 TypeScript 類型和工具函式
+
+3. **功能完全一致**
+
+   - API 端點和行為與原本完全相同（`GET /api/nodes`、`PATCH /api/nodes/move`）
+   - 驗證規則和錯誤處理保持一致
+   - 資料結構和回應格式不變
+
+4. **部署更簡單**
+
+   - 單一應用部署，無需分別部署前端和後端
+   - 適合 Vercel、Netlify 等平台
+   - 減少部署複雜度和成本
+
+5. **開發體驗提升**
+   - 類型安全：前後端共用 TypeScript 類型
+   - 熱重載：API 和前端同時支援
+   - 除錯方便：同一進程，除錯更直觀
+
+> **注意**：貴公司提供的 `server/server.js` 和 `server/README.md` 已保留作為參考，展示原本的 API 實作方式。
 
 ### API 端點
 
-Mock API 提供兩個端點：
+Nuxt 4 Server API 提供兩個端點（路徑前綴為 `/api`）：
 
-**GET /nodes?flat=true/false**
+**GET /api/nodes?flat=true/false**
 
 取得所有電表節點資料
 
-**PATCH /nodes/move**
+- `flat=true`（預設）：回傳扁平陣列
+- `flat=false`：回傳樹狀結構，包含 `depth` 與 `children`
+
+**PATCH /api/nodes/move**
 
 移動節點到新的父節點
 
@@ -161,12 +211,11 @@ npm install @pinia/nuxt vue-tsc -D
 
 **Q: API 無法連接？**
 
-A: 確認 Mock API 伺服器正在運行（端口 3001）：
+A: Nuxt 4 的 API 路由已整合在開發伺服器中，只需執行 `npm run dev` 即可。確認 `server/api/` 目錄下的 API 檔案存在。
 
-```bash
-cd server
-npm start
-```
+**Q: 為什麼不使用貴公司提供的獨立 Mock API 伺服器？**
+
+A: 為了配合使用 Nuxt 4，採用 Nuxt 4 Server API 整合後端功能，不需要啟動兩個伺服器，方便本地開發。功能完全一致，API 端點和行為與原本相同。貴公司提供的 `server/server.js` 已保留作為參考。
 
 ## 📄 授權
 
