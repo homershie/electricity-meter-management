@@ -1,3 +1,5 @@
+import { getNodes } from '../utils/dataStore'
+
 interface Node {
   id: number
   name: string
@@ -11,20 +13,10 @@ interface TreeNode {
   children: TreeNode[]
 }
 
-// 初始數據 - 在 Vercel serverless 環境中無法讀取文件系統
-const initialNodes: Node[] = [
-  { id: 1, name: "B2樓變電站_HT-01", parent_id: null },
-  { id: 2, name: "B2_冰水泵1", parent_id: 1 },
-  { id: 3, name: "B2_冰水泵2", parent_id: 1 },
-  { id: 4, name: "RF_冷卻水泵1", parent_id: 1 },
-  { id: 5, name: "RF_冷卻水泵2", parent_id: 2 },
-  { id: 6, name: "RF_冷卻水泵4", parent_id: 3 }
-]
-
 function readNodes(): Node[] {
+  // 從共享的數據存儲讀取
   // TODO: 在生產環境中，應該連接到真實數據庫（如 PostgreSQL、MongoDB）
-  // 目前使用內存數據用於演示
-  return initialNodes
+  return getNodes()
 }
 
 function buildTree(nodes: Node[]): TreeNode[] {
