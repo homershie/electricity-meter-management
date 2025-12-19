@@ -1,7 +1,16 @@
 <template>
   <v-app>
-    <v-app-bar color="primary" elevation="2">
-      <v-app-bar-title>電表管理系統</v-app-bar-title>
+    <v-app-bar color="primary" elevation="2" class="px-8">
+      <template v-slot:prepend>
+        <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      </template>
+      <v-app-bar-title class="font-weight-bold text-h5"
+        >Blutech</v-app-bar-title
+      >
+
+      <template v-slot:append>
+        <v-btn icon="mdi-theme-light-dark" @click="toggleTheme"></v-btn>
+      </template>
     </v-app-bar>
 
     <v-main>
@@ -11,5 +20,34 @@
 </template>
 
 <script setup lang="ts">
+import { useTheme } from "vuetify";
+import { loadState, saveState } from "~/utils/localStorage";
+
 // 全域設定
+const theme = useTheme();
+
+// 從 localStorage 讀取保存的主題設定
+const savedTheme = loadState<string>("theme", "light");
+if (savedTheme) {
+  theme.global.name.value = savedTheme;
+}
+
+// 切換主題並保存到 localStorage
+const toggleTheme = () => {
+  const newTheme = theme.global.name.value === "light" ? "dark" : "light";
+  theme.global.name.value = newTheme;
+  saveState("theme", newTheme);
+};
 </script>
+
+<style>
+:root {
+  font-family: "Helvetica Neue", "Verdana", "Microsoft YaHei", "PingFang SC",
+    Arial, sans-serif;
+}
+
+.v-application {
+  font-family: "Helvetica Neue", "Verdana", "Microsoft YaHei", "PingFang SC",
+    Arial, sans-serif !important;
+}
+</style>

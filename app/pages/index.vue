@@ -1,8 +1,8 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <v-row>
       <v-col cols="12">
-        <h1 class="text-h4 mb-4">電表階層管理系統</h1>
+        <h1 class="text-h4 mb-4 font-weight-bold">電表階層管理系統</h1>
 
         <!-- Loading 狀態 -->
         <v-progress-linear
@@ -40,16 +40,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { useNodesStore } from '~/stores/nodesStore'
+import { onMounted } from "vue";
+import { useNodesStore } from "~/stores/nodesStore";
 
-const store = useNodesStore()
+const store = useNodesStore();
 
 onMounted(async () => {
   try {
-    await store.loadNodes()
+    await store.loadNodes();
   } catch (error) {
-    console.error('Failed to load nodes:', error)
+    console.error("Failed to load nodes:", error);
   }
-})
+});
 </script>
