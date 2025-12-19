@@ -11,19 +11,19 @@ export function useNodesAPI() {
   async function fetchNodes(flat = true): Promise<Node[] | TreeNode[]> {
     const url = `${apiBase}/nodes?flat=${flat}`
 
-    const { data, error } = await useFetch<Node[] | TreeNode[]>(url, {
-      method: 'GET',
-    })
+    try {
+      const data = await $fetch<Node[] | TreeNode[]>(url, {
+        method: 'GET',
+      })
 
-    if (error.value) {
-      throw new Error(`Failed to fetch nodes: ${error.value.message}`)
+      if (!data) {
+        throw new Error('No data returned from API')
+      }
+
+      return data
+    } catch (error: any) {
+      throw new Error(`Failed to fetch nodes: ${error.message || error}`)
     }
-
-    if (!data.value) {
-      throw new Error('No data returned from API')
-    }
-
-    return data.value
   }
 
   /**
@@ -39,19 +39,19 @@ export function useNodesAPI() {
       target_parent_id: targetParentId,
     }
 
-    const { data, error } = await useFetch<MoveNodesResponse>(url, {
-      method: 'PATCH',
-      body: payload,
-    })
+    try {
+      const data = await $fetch<MoveNodesResponse>(url, {
+        method: 'PATCH',
+        body: payload,
+      })
 
-    if (error.value) {
+      return data || { success: false, error: 'Unknown error' }
+    } catch (error: any) {
       return {
         success: false,
-        error: error.value.message,
+        error: error.message || 'Failed to move nodes',
       }
     }
-
-    return data.value || { success: false, error: 'Unknown error' }
   }
 
   return {

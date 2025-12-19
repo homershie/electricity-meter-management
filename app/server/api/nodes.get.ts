@@ -15,7 +15,7 @@ interface TreeNode {
 }
 
 function readNodes(): Node[] {
-  const dbPath = path.join(process.cwd(), 'server', 'db.json')
+  const dbPath = path.join(process.cwd(), 'app', 'server', 'db.json')
   const data = JSON.parse(fs.readFileSync(dbPath, 'utf-8'))
   return data.nodes
 }

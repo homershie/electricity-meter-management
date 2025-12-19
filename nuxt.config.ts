@@ -1,7 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
-  devtools: { enabled: true },
+  devtools: { enabled: false },  // 禁用以解決 Windows 路徑 bug
+
+  srcDir: 'app/',  // 指定源代碼目錄
 
   devServer: {
     port: 3000,
@@ -20,7 +22,7 @@ export default defineNuxtConfig({
 
   vite: {
     ssr: {
-      noExternal: ['vuetify'],
+      noExternal: ["vuetify"],
     },
   },
 
