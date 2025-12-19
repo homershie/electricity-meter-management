@@ -140,6 +140,16 @@ export const useNodesStore = defineStore("nodes", {
       nodeIds: number[],
       targetParentId: number | null
     ): { valid: boolean; error?: string } {
+      // 驗證必須至少選擇一個節點
+      if (nodeIds.length === 0) {
+        return { valid: false, error: "請至少選擇一個要移動的設備" };
+      }
+
+      // 驗證所選節點必須在同一個層級
+      if (!areSameLevel(this.nodes, nodeIds)) {
+        return { valid: false, error: "所選取的設備必須在同一個層級" };
+      }
+
       // 驗證節點存在
       for (const id of nodeIds) {
         const node = findNode(this.nodes, id);

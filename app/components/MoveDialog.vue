@@ -34,7 +34,7 @@
         />
 
         <p class="mb-4">
-          已選取 <strong>{{ selectedIds.length }}</strong> 個設備
+          已選取 <strong>{{ targetDeviceIds.length }}</strong> 個設備
         </p>
 
         <v-alert
@@ -67,7 +67,7 @@
 import { ref, computed, watch } from "vue";
 import type { Node } from "~/types/node";
 import { useNodesStore } from "~/stores/nodesStore";
-import { isDescendant } from "~/utils/treeHelpers";
+import { isDescendant, areSameLevel } from "~/utils/treeHelpers";
 
 const props = defineProps<{
   modelValue: boolean;
@@ -77,7 +77,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
-  (e: "move", targetParentId: number | null): void;
+  (e: "move", targetParentId: number | null, deviceIds: number[]): void;
 }>();
 
 const store = useNodesStore();
@@ -97,11 +97,11 @@ const availableParents = computed(() => {
     { label: "（根層級）", value: null },
   ];
 
-  // 排除已選節點及其子孫
-  const excludeIds = new Set(props.selectedIds);
+  // 排除已選節點及其子孫（使用 targetDeviceIds 而不是 props.selectedIds）
+  const excludeIds = new Set(targetDeviceIds.value);
 
   // 為每個選中的節點，排除其所有子孫
-  for (const selectedId of props.selectedIds) {
+  for (const selectedId of targetDeviceIds.value) {
     for (const node of props.nodes) {
       if (isDescendant(props.nodes, selectedId, node.id)) {
         excludeIds.add(node.id);
@@ -121,19 +121,61 @@ const availableParents = computed(() => {
   return options;
 });
 
-// 可用的設備選項（所有節點）
+// 可用的設備選項（只顯示與已選設備同層級的節點）
 const availableDevices = computed(() => {
-  return props.nodes.map((node) => ({
-    label: node.name,
-    value: node.id,
-  }));
+  // 如果沒有已選設備，顯示所有節點
+  if (targetDeviceIds.value.length === 0) {
+    return props.nodes.map((node) => ({
+      label: node.name,
+      value: node.id,
+    }));
+  }
+
+  // 取得第一個已選設備的父節點 ID（用於判斷層級）
+  const firstSelectedId = targetDeviceIds.value[0];
+  if (firstSelectedId === undefined) {
+    return props.nodes.map((node) => ({
+      label: node.name,
+      value: node.id,
+    }));
+  }
+
+  const firstNode = props.nodes.find((n) => n.id === firstSelectedId);
+  if (!firstNode) {
+    return props.nodes.map((node) => ({
+      label: node.name,
+      value: node.id,
+    }));
+  }
+
+  const targetParentId = firstNode.parent_id;
+
+  // 只顯示與已選設備同層級的節點
+  return props.nodes
+    .filter((node) => node.parent_id === targetParentId)
+    .map((node) => ({
+      label: node.name,
+      value: node.id,
+    }));
 });
 
 // 驗證是否可移動
 const canMove = computed(() => {
   if (loading.value) return false;
 
-  const validation = store.canMove(props.selectedIds, targetParentId.value);
+  // 驗證必須至少選擇一個設備
+  if (targetDeviceIds.value.length === 0) {
+    validationError.value = "請至少選擇一個要移動的設備";
+    return false;
+  }
+
+  // 驗證所選設備必須在同一個層級
+  if (!areSameLevel(props.nodes, targetDeviceIds.value)) {
+    validationError.value = "所選取的設備必須在同一個層級";
+    return false;
+  }
+
+  const validation = store.canMove(targetDeviceIds.value, targetParentId.value);
   validationError.value = validation.error || null;
 
   return validation.valid;
@@ -159,7 +201,7 @@ async function confirm() {
 
   loading.value = true;
   try {
-    emit("move", targetParentId.value);
+    emit("move", targetParentId.value, targetDeviceIds.value);
   } finally {
     loading.value = false;
   }

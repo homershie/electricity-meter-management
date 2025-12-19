@@ -22,7 +22,7 @@
       </div>
     </v-card-title>
 
-    <v-card-text>
+    <v-card-text class="pa-0">
       <!-- 同階層選取提示 -->
       <v-alert
         v-if="store.selectedIds.length > 0 && !store.isSelectionValid"
@@ -124,9 +124,9 @@ function openMoveDialog() {
 }
 
 // 處理移動操作
-async function handleMove(targetParentId: number | null) {
+async function handleMove(targetParentId: number | null, deviceIds: number[]) {
   try {
-    await store.moveNodes(store.selectedIds, targetParentId);
+    await store.moveNodes(deviceIds, targetParentId);
     showMoveDialog.value = false;
   } catch (error) {
     console.error("Move failed:", error);
