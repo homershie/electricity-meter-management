@@ -27,7 +27,23 @@
         </v-alert>
 
         <!-- 主要內容 -->
-        <ElectricityMeterTree v-if="!store.loading && store.nodes.length > 0" />
+        <template v-if="!store.loading && store.nodes.length > 0">
+          <ElectricityMeterTree />
+
+          <!-- 說明文字 -->
+          <v-alert
+            type="success"
+            variant="outlined"
+            density="compact"
+            class="mt-4"
+          >
+            <template #prepend>
+              <v-icon>mdi-information</v-icon>
+            </template>
+            <strong>操作提示：</strong> Alt/Ctrl/Cmd +
+            點擊：可以多選項目，限定在同一階層。
+          </v-alert>
+        </template>
 
         <!-- 空狀態 -->
         <v-card v-else-if="!store.loading">

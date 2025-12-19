@@ -55,7 +55,7 @@
           <div
             class="tree-node-label"
             :class="{ selected: isNodeSelected(item.id) }"
-            @click.stop="handleNodeClick(item)"
+            @click.stop="handleNodeClick(item, $event)"
           >
             {{ item.name }}
             <v-chip
@@ -114,8 +114,17 @@ function isNodeSelected(id: number): boolean {
 }
 
 // 處理節點點擊
-function handleNodeClick(item: TreeNode) {
-  store.toggleSelected(item.id);
+function handleNodeClick(item: TreeNode, event: MouseEvent) {
+  // 檢查是否有修飾鍵（Alt、Ctrl 或 Mac 的 Command）
+  const isMultiSelect = event.altKey || event.ctrlKey || event.metaKey;
+
+  if (isMultiSelect) {
+    // 多選模式：切換選取狀態
+    store.toggleSelected(item.id);
+  } else {
+    // 單選模式：清空之前選取，只選取當前項目
+    store.setSelected([item.id]);
+  }
 }
 
 // 開啟移動對話框
