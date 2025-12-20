@@ -23,13 +23,14 @@ const theme = useTheme();
 // 從 localStorage 讀取保存的主題設定
 const savedTheme = loadState<string>("theme", "light");
 if (savedTheme) {
-  theme.global.name.value = savedTheme;
+  theme.change(savedTheme);
 }
 
 // 切換主題並保存到 localStorage
 const toggleTheme = () => {
-  const newTheme = theme.global.name.value === "light" ? "dark" : "light";
-  theme.global.name.value = newTheme;
+  const currentTheme = theme.global.name.value;
+  const newTheme = currentTheme === "light" ? "dark" : "light";
+  theme.change(newTheme);
   saveState("theme", newTheme);
 };
 </script>

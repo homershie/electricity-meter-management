@@ -6,6 +6,7 @@
 
 - ✅ 樹狀結構顯示電表階層關係
 - ✅ 多選同階層電表（Alt/Ctrl + 點擊）
+- ✅ **拖曳移動**：直接拖曳節點建立父子關係或移動到根層級
 - ✅ 透過 Modal 移動電表至不同階層
 - ✅ 同層級驗證機制（移動時只能選擇同層級設備）
 - ✅ 完整的移動驗證規則（不可移到自身、子孫節點）
@@ -94,6 +95,16 @@ electricity-meter-management/
 
 ### 移動電表
 
+#### 方式一：拖曳移動（推薦）⭐
+
+1. **開始拖曳**：點擊並按住節點左側的拖曳圖示（`mdi-drag`）
+2. **拖曳過程**：
+   - 拖曳到任何節點上會顯示綠色背景，表示該節點將成為新的父節點
+   - 拖曳到樹狀容器的空白區域（不在任何節點上）會顯示綠色背景、邊框和陰影，表示移動到根層級
+3. **放開滑鼠**：拖曳的節點會自動移動到目標位置
+
+#### 方式二：透過 Modal 移動
+
 1. 選取一個或多個同階層的電表
 2. 點擊右上角的「移動階層」按鈕
 3. 在 Modal 中：
@@ -121,6 +132,7 @@ electricity-meter-management/
 - **State Management**: Pinia
 - **Language**: TypeScript
 - **API**: Nuxt 4 Server API（內建 API 路由）
+- **拖曳功能**: @vueuse/integrations + SortableJS（基於 SortableJS 的 Vue 3 整合）
 
 ### 📋 架構說明
 
@@ -274,5 +286,8 @@ A: 為了配合使用 Nuxt 4，採用 Nuxt 4 Server API 整合後端功能，不
 
 ---
 
-**開發時間**: 2025-12-19
-**技術棧**: Nuxt 4 + Vuetify 3 + Pinia + TypeScript
+**開發時間**: 2025-12-19  
+**最後更新**: 2025-12-20（新增拖曳功能）  
+**技術棧**: Nuxt 4 + Vuetify 3 + Pinia + TypeScript + @vueuse/integrations
+
+> 📖 詳細的拖曳功能實作說明請參考 [拖曳功能實作文檔](docs/DRAG_AND_DROP_IMPLEMENTATION.md)
